@@ -1,7 +1,7 @@
 {
   "name": "ts-express-template",
   "version": "1.0.0",
-  "description": "默默的 Ts-Express 后端项目模板",
+  "description": "默默的 TS-Express 后端模板，集合 esLint、prettier、commitlint 等审查相关库，cz-git、husky等代码提交库",
   "main": "src/app.ts",
   "type": "module",
   "private": false,
