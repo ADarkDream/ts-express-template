@@ -23,9 +23,9 @@
     // "useDefineForClassFields": true,                  /* 生成符合 ECMAScript 标准的类字段 */
     "moduleDetection": "force" /* 控制检测模块格式 JS 文件的方法 */,
     /* 模块相关 */
-    "module": "NodeNext" /* 指定生成代码的模块系统 */,
+    "module": "ESNext" /* 指定生成代码的模块系统 */,
     "rootDir": "./src" /* 指定源文件的根目录 */,
-    "moduleResolution": "NodeNext" /* 指定模块解析策略 */,
+    "moduleResolution": "bundler" /* 指定模块解析策略 */,
     "baseUrl": "./" /* 解析非相对模块名的基准目录 */,
     "paths": {
       "@/*": [
@@ -37,7 +37,7 @@
     // "types": [],                                      /* 指定自动包含的类型包名称 */
     // "allowUmdGlobalAccess": true,                     /* 允许从模块访问 UMD 全局变量 */
     // "moduleSuffixes": [],                             /* 模块解析时的文件后缀名列表 */
-    // "allowImportingTsExtensions": true /* 允许导入包含 TypeScript 扩展名的文件 */,
+    // "allowImportingTsExtensions": true, /* 允许导入包含 TypeScript 扩展名的文件 */
     // "rewriteRelativeImportExtensions": true,          /* 重写相对导入路径中的文件扩展名 */
     // "resolvePackageJsonExports": true,                /* 解析包导入时使用 package.json 的 exports 字段 */
     // "resolvePackageJsonImports": true,                /* 解析导入时使用 package.json 的 imports 字段 */
