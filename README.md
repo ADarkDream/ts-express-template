@@ -55,7 +55,8 @@ pnpm build
 "commit": "npm run lint:diff && cz",                                    // 代码暂存 && 格式化和校验 && 引导式提交【需要全局安装 commitizen】
 "start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",//开发模式，额外使用tsconfig.dev.json配置文件
 "start:prod": "pnpm build && cross-env NODE_ENV=production tsx dist/app.js",//生产模式(开发模式自动打包并运行)
-"build": "tsc"
+"build": "tsc",//打包命令
+"push": "git push Gitee master && git push origin master"  //分别推送到Gitee和Github远程仓库
 ```
 
 ## 项目根目录结构说明
@@ -93,3 +94,64 @@ pnpm build
 │── tsconfig.json           // TypeScript 配置文件
 └── tsconfig.dev.json       // 用于开发模式运行的差异化 TypeScript 配置
 ```
+
+## Git 提交规范
+
+项目已配置引导式提交工具，执行`commit`脚本,例如`npm run commit`，即可触发，大致步骤如下。
+
+一、引导式提交
+
+**需要全局安装`pnpm add -g commitizen`**
+
+1、代码格式化和检查：
+
+每次执行时会先将被修改的代码添加到暂存区，然后进行代码检查。如果检查出错，注意看报错信息，会提醒是否可自动修复。
+
+如果可以**自动修复就使用`lint:diff`脚本**将文件添加到暂存区再自动修复，这仅会修复本次修改的代码(如果你使用`lint:fix`脚本会检查并修改整个项目的代码)，如果无法自动修复则前往错误文件手动修改(`Ctrl键+鼠标左键`可以快速跳转)。
+
+代码检查通过之后才会进行引导式提交。
+
+2、开始引导式提交：
+
+在引导式提交中，会依次要求选择类型( type )、范围( scope )、主题( subject )和其他信息，依照提醒一步步完成即可（具体格式要求可阅下方自行提交第3步）。
+
+3、commit 信息格式校验：
+
+commit 信息输入完成之后会触发格式检查，检查无误才会将代码提交到本地仓库。（**如果试错多次仍无法过校验，有可能是配置问题**）
+
+4、将本地仓库代码提交到远程仓库
+【可选】配置用户名和邮箱，以便提交代码时能够识别身份：
+
+`git config --global user.name 你的名字`
+
+`git config --global user.email 你的邮箱`
+
+执行命令`git remote -v`查看当前项目关联的远程仓库，如果你没有关联仓库，执行如下命令可关联本项目的仓库：
+
+``` bash
+git remote add origin https://github.com/ADarkDream/ts-express-template.git
+# and
+git remote add Gitee https://gitee.com/MuXi-Dream/ts-express-template.git
+```
+
+执行脚本`push`或命令`git push Gitee && git push origin`可将本地仓库代码提交到所有相关联的远程仓库
+
+或`git push Gitee master` or `git push origin master`可分别推送到两个仓库
+
+二、自行提交
+
+如果不需要引导式提交，可执行命令`git add . && npm exec lint-staged && git commit`进行提交，命令说明如下：
+
+1、`git add  .`：先将被修改的代码添加到暂存区；
+
+2、`npm exec lint-staged`：引导式提交中的第1步，代码格式化和检查；
+
+3、`git commit`：原版提交方式；
+
+提交信息详细规则在`commitlint.config.cjs`中可以查看，大致格式如`{type}({scope,scope}): {subject}`。
+
+**其中 type 和 subject 为必填项，scope 可不填，也可填多个，用英文逗号分隔，仅支持中文、英文小写、数字和下划线。冒号后需要加空格**。
+
+4、引导式提交中的第3步和第4步
+
+>如果你对这个工作流程感兴趣，欢迎阅读文章：[代码审查和 git commit 引导、校验工作流](https://mp.weixin.qq.com/s/ta7lt3-BZvkLyjyLW934BA)

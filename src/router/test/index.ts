@@ -1,6 +1,6 @@
 //test路由模块
 import express, { Router } from "express"
-import { test_main_router, test_aaa_router } from "./test-router"
+import { test_main_router, test_aaa_router } from "./controller"
 
 const router: Router = express.Router()
 
