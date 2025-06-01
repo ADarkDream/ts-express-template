@@ -18,7 +18,7 @@
     "start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",
     "start:prod": "pnpm build && cross-env NODE_ENV=production tsx dist/app.js",
     "build": "tsc",
-    "push": "git push Gitee master && git push origin master"
+    "push": "git push Gitee base && git push origin base"
   },
   "keywords": [],
   "author": "MoMo",
