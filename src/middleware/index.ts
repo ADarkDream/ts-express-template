@@ -4,20 +4,20 @@ import { CustomResponse, CtxHandler } from "@/types/system"
 
 /**全局中间件，精简res.send()*/
 export const send = (req: Request, res: CustomResponse, next: NextFunction) => {
-  res.ss = (data) => {
-    if (typeof data === "string") return res.send({ code: 200, msg: data })
+  res.ss = (data, status = 200) => {
+    if (typeof data === "string") return res.send({ code: status, msg: data })
     const { code, ...restData } = data
     res.send({
-      code: code || 200,
+      code: code || status || 200,
       ...restData,
     })
   }
 
-  res.ww = (data) => {
-    if (typeof data === "string") return res.send({ code: 300, msg: data })
+  res.ww = (data, status = 300) => {
+    if (typeof data === "string") return res.send({ code: status, msg: data })
     const { code, ...restData } = data
     res.send({
-      code: code || 300,
+      code: code || status || 300,
       ...restData,
     })
   }
@@ -30,6 +30,25 @@ export const send = (req: Request, res: CustomResponse, next: NextFunction) => {
     })
   }
   next()
+}
+
+/**全局错误中间件,捕获未捕获的错误(在app末尾使用)*/
+export const errorHandler = (err: Error, req: Request, res: CustomResponse, next: NextFunction) => {
+  console.error("|发生了错误：", err)
+  // JWT错误
+  if (err.name === "UnauthorizedError") {
+    if (err.message === "jwt expired") {
+      res.ee("身份认证已过期,请重新登录！", 401)
+    } else if (err.message === "No authorization token was found") {
+      res.ee("您尚未登录,请先登录！", 402)
+    } else {
+      console.error("|未知JWT错误：" + err.message)
+      res.ee(`未知错误：${err.message}`)
+    }
+  } else {
+    console.error("|发生了未知错误")
+    res.ee(err?.message || "未知错误")
+  }
 }
 
 /**
@@ -49,7 +68,7 @@ export function asyncHandler(
       await handler(req, res as CustomResponse, next)
     } catch (err: any) {
       const msg = err?.message || defaultErrorMessage
-      console.error("全局 asyncHandler 错误捕获：", msg)
+      console.error("|路由错误捕获：", msg)
       //因为加了类型断言，所以加了;()
       ;(res as CustomResponse).ee?.(msg)
     }
@@ -58,6 +77,7 @@ export function asyncHandler(
 
 const middleware = {
   send,
+  errorHandler,
   asyncHandler,
 }
 

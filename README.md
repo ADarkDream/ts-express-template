@@ -6,6 +6,11 @@
 
 默默的 TS-Express 后端模板，集合 esLint、prettier、commitlint 等审查相关库，cz-git、husky等代码提交库
 
+## 分支说明
+
+- master:主分支
+- base:基础分支，仅包含基础 ts-express 模板，不包含数据库操作等库(当前分支)
+
 ### 项目安装
 
 ```shell
@@ -69,20 +74,23 @@ pnpm build
 │── .vscode                 // VSCode项目相关配置
 │   ├── extensions.json     // VSCode插件推荐
 │   └── settings.json       // VSCode项目配置
-│── dist                    // 打包后的文件,生产模式
-│── doc                     // 说明文档
+│── dist                    // 打包后的文件存放路径(生产模式)
+│── doc                     // 各类文档
 │── download                // 下载功能下载的文件存储地址
 │── node_modules            // 依赖包
 │── src                     // 项目主目录
+│   ├── configs             // 各类配置(优先级高于环境变量)
 │   └── middlewares         // 中间件
 │   └── routes              // 路由
-│   │   ├── test            // 示例路由test
-│   │   │   ├── controller  // 所有test子路由的路由控制器函数
-│   │   │   └── index.ts    // 所有test子路由
-│   │   └── index.ts        // 主路由，添加并导出所有路由
+│   │   ├── test            // 二级路由示例：/test
+│   │   │   ├── controller  // 所有/test子路由的路由控制器函数
+│   │   │   └── index.ts    // 所有/test子路由
+│   │   ├── controller      // 主路由的路由控制器函数
+│   │   └── index.ts        // 主路由，添加并导出所有路由,处理默认请求和404请求
 │   └── types               // 类型定义
-│   └── utils               // 工具
+│   └── utils               // 工具函数
 │   └── app.ts              // 项目入口文件
+│── static                  // 静态资源文件夹，可在app.ts中配置范围和路径
 │── .env                    // 全局环境变量
 │── .env.development        // 开发环境模式下的变量(开发环境下默认)
 │── .env.production         // 生产环境模式下的变量，脚本带上 "--mode 环境名" 参数即可读取对应环境下的变量，如脚本 "build:prod" 使用的 "--mode production"
