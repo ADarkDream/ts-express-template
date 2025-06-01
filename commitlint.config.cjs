@@ -51,7 +51,7 @@ const getCacheScope = () => {
     return defaultScopeArr
   } else {
     const cacheScopeArr = JSON.parse(fs.readFileSync(__SCOPE_CACHE_PATH, "utf8"))
-    return [...new Set([defaultScopeArr, ...cacheScopeArr])]
+    return [...new Set([...defaultScopeArr, ...cacheScopeArr])]
   }
 }
 //#endregion
