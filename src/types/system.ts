@@ -7,7 +7,20 @@ type Result<T> = {
   data?: T
 }
 
-/**拓展Response类型*/
+/**拓展 Request 类型*/
+export interface CustomRequest extends Request {
+  auth?: {
+    value: {
+      uid: number
+      email: string
+      username: string
+    }
+    exp: number
+    iat: number
+  }
+}
+
+/**拓展 Response 类型*/
 export interface CustomResponse extends Response {
   /**正确返回函数，不传code值则默认为200*/
   ss: (data: string | Result<any>, status?: number) => void
@@ -32,3 +45,13 @@ export interface CustomRouter {
   put: RequestHandler
   [key: string]: RequestHandler
 }
+
+/**数据库错误类型*/
+export interface MysqlError extends Error {
+  code?: string
+  errno?: number
+  sqlMessage?: string
+}
+
+/**数据库事务委托查询参数类型*/
+export type TransactionQuery = { sqlStr: string; values: Array<any>; callback?: Function }

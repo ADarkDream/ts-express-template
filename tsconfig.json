@@ -28,9 +28,7 @@
     "moduleResolution": "bundler" /* 指定模块解析策略 */,
     "baseUrl": "./" /* 解析非相对模块名的基准目录 */,
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     } /* 设置模块名到实际路径的映射 */,
     // "rootDirs": [],                                   /* 将多个目录视为一个目录（模块解析时） */
     // "typeRoots": [],                                  /* 指定类型声明文件的搜索目录（类似 node_modules/@types） */
@@ -43,15 +41,15 @@
     // "resolvePackageJsonImports": true,                /* 解析导入时使用 package.json 的 imports 字段 */
     // "customConditions": [],                           /* 解析导入时的自定义条件 */
     // "noUncheckedSideEffectImports": true,             /* 检查副作用导入 */
-    "resolveJsonModule": true, /* 允许导入 JSON 文件 */
+    "resolveJsonModule": true /* 允许导入 JSON 文件 */,
     // "allowArbitraryExtensions": true,                 /* 允许导入任意扩展名的文件（需有声明文件） */
     // "noResolve": true,                                /* 禁止通过 import/require/reference 扩展项目文件 */
     /* JavaScript 支持 */
-    "allowJs": true, /* 允许 JavaScript 文件作为项目的一部分 */
+    "allowJs": true /* 允许 JavaScript 文件作为项目的一部分 */,
     // "checkJs": true,                                  /* 在 JavaScript 文件中报告类型错误 */
     // "maxNodeModuleJsDepth": 1,                        /* 指定检查 node_modules 中 JS 文件的最大深度 */
     /* 生成输出 */
-    "declaration": true, /* 生成 .d.ts 声明文件 */
+    "declaration": true /* 生成 .d.ts 声明文件 */,
     // "declarationMap": true,                           /* 为声明文件生成 sourcemap */
     // "emitDeclarationOnly": true,                      /* 只输出声明文件，不生成 JS 文件 */
     // "sourceMap": true,                                /* 生成 JS 文件的 sourcemap */
@@ -76,10 +74,10 @@
     // "verbatimModuleSyntax": true,                     /* 严格保留导入/导出语法 */
     // "isolatedDeclarations": true,                     /* 要求导出有足够类型注解 */
     // "erasableSyntaxOnly": true,                       /* 禁止非 ECMAScript 的运行时构造 */
-    "allowSyntheticDefaultImports": true, /* 允许从无默认导出的模块默认导入 */
-    "esModuleInterop": true, /* 增强 CommonJS 模块导入支持,兼容 CJS/ESM 互操作 */
+    "allowSyntheticDefaultImports": true /* 允许从无默认导出的模块默认导入 */,
+    "esModuleInterop": true /* 增强 CommonJS 模块导入支持,兼容 CJS/ESM 互操作 */,
     // "preserveSymlinks": true,                         /* 禁用解析符号链接真实路径 */
-    "forceConsistentCasingInFileNames": true, /* 强制导入时使用正确的大小写 */
+    "forceConsistentCasingInFileNames": true /* 强制导入时使用正确的大小写 */,
     /* 类型检查 */
     "strict": true /* 启用所有严格类型检查选项 */,
     // "noImplicitAny": true,                            /* 禁止隐式 any 类型 */
@@ -103,11 +101,6 @@
     // "skipDefaultLibCheck": true,                      /* 跳过默认库的类型检查 */
     "skipLibCheck": true /* 跳过所有 .d.ts 文件的类型检查 */
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

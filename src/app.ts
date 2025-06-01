@@ -1,20 +1,23 @@
 // src/app.ts
 import dotenv from "dotenv" //环境变量的库
 dotenv.config({ path: `./.env.${process.env.NODE_ENV}` })
-import express from "express"
+import express, { Request, Response, NextFunction } from "express"
 import cors from "cors"
-import { send, errorHandler } from "@/middleware/index"
+import { send, errorHandler, jwtHandler } from "@/middleware/index"
 import config from "@/configs/config.js"
-import type { Request, Response, NextFunction } from "express"
+
 //* 导入全部路由文件
 import routers from "@/routers/index"
 
+import { connectWithRetry } from "@/db/index"
+
 /**服务器监听端口*/
-const BASE_PORT = config.BASE_PORT || process.env.BASE_PORT || 3000
+const BASE_PORT = config.BASE_PORT || process.env.BASE_PORT || 9000
 /**服务器本地地址*/
 const BASE_URL = config.BASE_URL || process.env.BASE_URL || "http://127.0.0.1"
 
 const app = express()
+console.log("环境变量", new Date().toISOString())
 
 //有代理服务器，需要开启这个选项,获取访问者真实IP
 app.set("trust proxy", true)
@@ -34,13 +37,17 @@ app.use(express.json())
 //转换客户端提交的urlencoded（表单）格式的数据
 app.use(express.urlencoded({ extended: true }))
 
+//全局中间件，精简res.send()
+app.use(send as (req: Request, res: Response, next: NextFunction) => void)
+
+//Todo 将express-jwt库替换为jwtwebtoken中间件
+//JWT中间件
+app.use(jwtHandler as (req: Request, res: Response, next: NextFunction) => void)
+
 //静态资源中间件,允许访问static目录下的文件
 app.use("/favicon.ico", express.static("static/favicon.ico"))
 app.use("/img", express.static("static/images"))
 // app.use("/upload", express.static("static/uploads"))
-
-//全局中间件，精简res.send()
-app.use(send as (req: Request, res: Response, next: NextFunction) => void)
 
 //路由模块，导入全部路由
 app.use("/", routers)
@@ -52,6 +59,8 @@ app.use(errorHandler as (err: Error, req: Request, res: Response, next: NextFunc
 app.listen(BASE_PORT, () => {
   console.warn(`|当前环境是：${process.env.Node_ENV} 模式`)
   console.warn(`|服务器已启动，正在监听 ${BASE_URL}:${BASE_PORT}`)
+  //连接数据库并进行初始化查询
+  connectWithRetry()
 })
 
 //全局捕获未处理的异常，防止崩溃

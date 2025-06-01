@@ -8,7 +8,7 @@
 
 ### 合并分支
 
-``` shell
+```shell
 # 1. 切换到 master 分支
 git checkout master
 
@@ -27,11 +27,11 @@ git push origin master
 
 ### 撤销提交
 
-``` shell
+```shell
 # 1. 仅撤销提交，保留改动
 git reset --soft HEAD~1
 
-# 2. 撤销提交+取消暂存 
+# 2. 撤销提交+取消暂存
 git reset --mixed HEAD~1
 
 # 3. 完全回退提交 + 改动都消失

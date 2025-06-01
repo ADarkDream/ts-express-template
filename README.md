@@ -56,12 +56,13 @@ pnpm build
 "lint:prettier": "prettier . --write",                                  // 检查项目所有文件并自动修改不符合格式化规则的代码
 "lint:commitlint": "commitlint --edit $1",                              // 检查上一次的 commit 信息格式
 "lint-staged": "lint-staged",                                           // 检查暂存区所有文件，并自动修复格式及代码规范问题
-"lint:diff": "git add . && npm exec lint-staged",                       // 代码暂存 && 格式化和校验（仅检查并修复本次修改的文件）
+"lint:diff": "npm exec lint-staged",                                    // 格式化和校验（仅检查并修复暂存区的文件）
 "commit": "npm run lint:diff && cz",                                    // 代码暂存 && 格式化和校验 && 引导式提交【需要全局安装 commitizen】
 "start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",//开发模式，额外使用tsconfig.dev.json配置文件
+"start:remote": "cross-env NODE_ENV=development IS_REMOTE=true TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",//远程开发模式，在start基础上加上远程开发标识,连接远程服务器数据库
 "start:prod": "pnpm build && cross-env NODE_ENV=production tsx dist/app.js",//生产模式(开发模式自动打包并运行)
-"build": "tsc",//打包命令
-"push": "git push Gitee master && git push origin master"  //分别推送到Gitee和Github远程仓库
+"build": "tsc",                                                         //打包命令
+"push": "git push Gitee master && git push origin master"               //分别推送到Gitee和Github远程仓库
 ```
 
 ## 项目根目录结构说明
@@ -121,14 +122,14 @@ pnpm build
 
 2、开始引导式提交：
 
-在引导式提交中，会依次要求选择类型( type )、范围( scope )、主题( subject )和其他信息，依照提醒一步步完成即可（具体格式要求可阅下方自行提交第3步）。
+在引导式提交中，会依次要求选择类型( type )、范围( scope )、主题( subject
+)和其他信息，依照提醒一步步完成即可（具体格式要求可阅下方自行提交第3步）。
 
 3、commit 信息格式校验：
 
 commit 信息输入完成之后会触发格式检查，检查无误才会将代码提交到本地仓库。（**如果试错多次仍无法过校验，有可能是配置问题**）
 
-4、将本地仓库代码提交到远程仓库
-【可选】配置用户名和邮箱，以便提交代码时能够识别身份：
+4、将本地仓库代码提交到远程仓库【可选】配置用户名和邮箱，以便提交代码时能够识别身份：
 
 `git config --global user.name 你的名字`
 
@@ -136,7 +137,7 @@ commit 信息输入完成之后会触发格式检查，检查无误才会将代�
 
 执行命令`git remote -v`查看当前项目关联的远程仓库，如果你没有关联仓库，执行如下命令可关联本项目的仓库：
 
-``` bash
+```bash
 git remote add origin https://github.com/ADarkDream/ts-express-template.git
 # and
 git remote add Gitee https://gitee.com/MuXi-Dream/ts-express-template.git
@@ -162,4 +163,4 @@ git remote add Gitee https://gitee.com/MuXi-Dream/ts-express-template.git
 
 4、引导式提交中的第3步和第4步
 
->如果你对这个工作流程感兴趣，欢迎阅读文章：[代码审查和 git commit 引导、校验工作流](https://mp.weixin.qq.com/s/ta7lt3-BZvkLyjyLW934BA)
+> 如果你对这个工作流程感兴趣，欢迎阅读文章：[代码审查和 git commit 引导、校验工作流](https://mp.weixin.qq.com/s/ta7lt3-BZvkLyjyLW934BA)
