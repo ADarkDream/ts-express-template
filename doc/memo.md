@@ -37,3 +37,14 @@ git reset --mixed HEAD~1
 # 3. 完全回退提交 + 改动都消失
 git reset --hard HEAD~1
 ```
+
+### 取消对某文件的跟踪
+
+1、如果是新增文件，从未提交过，在.gitignore文件中添加文件名，即可忽略该文件
+
+2、如果是已经提交过，在步骤1的基础上，再执行`git rm --cached 文件名`，然后提交代码，即可忽略该文件
+
+```shell
+# 取消git对文件的跟踪
+git rm --cached 文件名
+```

@@ -129,3 +129,5 @@ dist
 
 #自定义的忽略项
 helper.json
+.env
+.env.* 
