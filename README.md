@@ -9,7 +9,7 @@
 ## 分支说明
 
 - master:主分支
-- base:基础分支，仅包含基础 ts-express 模板，不包含数据库操作等库(当前分支)
+- **base:基础分支，仅包含基础 ts-express 模板，不包含数据库操作等库(当前分支)**
 
 ### 项目安装
 
@@ -144,7 +144,7 @@ git remote add Gitee https://gitee.com/MuXi-Dream/ts-express-template.git
 
 执行脚本`push`或命令`git push Gitee && git push origin`可将本地仓库代码提交到所有相关联的远程仓库
 
-或`git push Gitee master` or `git push origin master`可分别推送到两个仓库
+或`git push Gitee base` or `git push origin base`可分别推送到两个仓库
 
 二、自行提交
 
