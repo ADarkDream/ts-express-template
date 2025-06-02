@@ -14,7 +14,7 @@
     "lint": "eslint . --fix",
     "lint:prettier": "prettier . --write",
     "lint:commitlint": "commitlint --edit $1",
-    "lint:diff": "git add . && pnpm exec lint-staged",
+    "lint:diff": "pnpm exec lint-staged",
     "commit": "pnpm run lint:diff && cz",
     "start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",
     "start:prod": "pnpm build && cross-env NODE_ENV=production tsx dist/app.js",

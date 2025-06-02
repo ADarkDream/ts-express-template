@@ -60,7 +60,7 @@ pnpm build
 "lint:prettier": "prettier . --write",                                  // 检查项目所有文件并自动修改不符合格式化规则的代码
 "lint:commitlint": "commitlint --edit $1",                              // 检查上一次的 commit 信息格式
 "lint-staged": "lint-staged",                                           // 检查暂存区所有文件，并自动修复格式及代码规范问题
-"lint:diff": "git add . && npm exec lint-staged",                       // 代码暂存 && 格式化和校验（仅检查并修复本次修改的文件）
+"lint:diff": "npm exec lint-staged",                                    // 代码暂存 && 格式化和校验（仅检查并修复本次修改的文件）
 "commit": "npm run lint:diff && cz",                                    // 代码暂存 && 格式化和校验 && 引导式提交【需要全局安装 commitizen】
 "start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",//开发模式，额外使用tsconfig.dev.json配置文件
 "start:prod": "pnpm build && cross-env NODE_ENV=production tsx dist/app.js",//生产模式(开发模式自动打包并运行)
