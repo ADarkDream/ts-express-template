@@ -6,6 +6,7 @@
   "type": "module",
   "private": false,
   "scripts": {
+    "prepare": "husky && node scripts/warn-env.js",
     "lint-staged": "lint-staged",
     "check:type": "vue-tsc --build --noEmit --force",
     "check:prettier": "prettier --check .",
@@ -18,6 +19,7 @@
     "start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",
     "start:remote": "cross-env NODE_ENV=development IS_REMOTE=true TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",
     "start:prod": "pnpm build && cross-env NODE_ENV=production tsx dist/app.js",
+    "orm:init": "cross-env NODE_ENV=development npx tsx src/db/orm/ormInit.ts",
     "build": "tsc",
     "push": "git push Gitee master && git push origin master"
   },
@@ -50,6 +52,7 @@
     "node-schedule": "^2.1.1",
     "nodemailer": "^7.0.3",
     "semver": "^7.7.2",
+    "sequelize": "^6.37.7",
     "ssh2": "^1.16.0",
     "typescript": "^5.8.3"
   },

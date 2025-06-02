@@ -5,6 +5,8 @@ import express, { Request, Response, NextFunction } from "express"
 import cors from "cors"
 import { send, errorHandler, jwtHandler } from "@/middleware/index"
 import config from "@/configs/config.js"
+import { generateModel } from "@/db/orm/ormInit"
+import { testUserQuery } from "@/db/orm/sql/user"
 
 //* 导入全部路由文件
 import routers from "@/routers/index"
@@ -17,7 +19,6 @@ const BASE_PORT = config.BASE_PORT || process.env.BASE_PORT || 9000
 const BASE_URL = config.BASE_URL || process.env.BASE_URL || "http://127.0.0.1"
 
 const app = express()
-console.log("环境变量", new Date().toISOString())
 
 //有代理服务器，需要开启这个选项,获取访问者真实IP
 app.set("trust proxy", true)
@@ -56,11 +57,16 @@ app.use("/", routers)
 app.use(errorHandler as (err: Error, req: Request, res: Response, next: NextFunction) => void)
 
 //启动服务器
-app.listen(BASE_PORT, () => {
+app.listen(BASE_PORT, async () => {
   console.warn(`|当前环境是：${process.env.Node_ENV} 模式`)
   console.warn(`|服务器已启动，正在监听 ${BASE_URL}:${BASE_PORT}`)
+
   //连接数据库并进行初始化查询
-  connectWithRetry()
+  await connectWithRetry()
+  //生成sequelize的模型（转为手动执行脚本 orm:init 生成）
+  // await generateModel()
+  //测试用户查询
+  // testUserQuery()
 })
 
 //全局捕获未处理的异常，防止崩溃

@@ -11,6 +11,16 @@
 - **master:主分支(当前分支)**
 - base:基础分支，仅包含基础 ts-express 模板，不包含数据库操作等库
 
+### 必需配置
+
+- 根路径下的.env.template文件及其类似.template命名的文件是环境变量的模版文件，项目启动前需要复制一份并重命名，去除'.template'字段，在其中配置完成项目需要的参数，方可正常运行项目。每个文件对应的环境可查阅下方的**项目根目录结构说明**
+- 在配置完环境变量之后，如果你使用的分支(master)需要连接数据库，且尚未连接数据库，请在环境变量文件(.env.?)中配置好数据库连接参数，并手动执行 **orm:init 脚本**，以生成 sequelize 所需的 models 文件，否则项目无法启动。
+
+> **orm:init 脚本使用注意事项**
+> 1、需要全局安装 sequelize-auto 库：  `pnpm add sequelize-auto -g`
+> 2、脚本默认读取 .env.development 文件中的数据库配置，若你使用的是其他环境模式，请修改脚本中的环境变量参数 NODE_ENV=development
+> 3、脚本在 src/db/orm/models/init-models.ts 存在时不会执行，如果要重新生成 models 文件请删除 src/db/orm/models/init-models.ts
+
 ### 项目安装
 
 ```shell
@@ -48,7 +58,7 @@ pnpm build
 ## 脚本说明(部分)
 
 ```text
-"prepare": "husky",                                                     // 每次执行 npm i 时触发，如果 husky 没有初始化，则初始化 husky
+"prepare": "husky && node scripts/warn-env.js",                         // 每次执行 npm i 时触发，如果 husky 没有初始化，则初始化 husky，然后打印项目说明提醒
 "check:type": "vue-tsc --build --noEmit --force",                       // 执行 TypeScript 类型检查，但不生成任何输出文件
 "check:prettier": "prettier --check .",                                 // 检查项目所有文件并报告不符合格式化规则的代码
 "check": "eslint .",                                                    // 检查项目所有文件并报告不符合格式化和校验规则的代码
@@ -58,9 +68,10 @@ pnpm build
 "lint-staged": "lint-staged",                                           // 检查暂存区所有文件，并自动修复格式及代码规范问题
 "lint:diff": "npm exec lint-staged",                                    // 格式化和校验（仅检查并修复暂存区的文件）
 "commit": "npm run lint:diff && cz",                                    // 代码暂存 && 格式化和校验 && 引导式提交【需要全局安装 commitizen】
-"start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",//开发模式，额外使用tsconfig.dev.json配置文件
-"start:remote": "cross-env NODE_ENV=development IS_REMOTE=true TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts",//远程开发模式，在start基础上加上远程开发标识,连接远程服务器数据库
-"start:prod": "pnpm build && cross-env NODE_ENV=production tsx dist/app.js",//生产模式(开发模式自动打包并运行)
+"start": "cross-env NODE_ENV=development TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts", //开发模式，额外使用tsconfig.dev.json配置文件
+"start:remote": "cross-env NODE_ENV=development IS_REMOTE=true TS_NODE_PROJECT=tsconfig.dev.json nodemon --exec tsx src/app.ts", //远程开发模式，在start基础上加上远程开发标识,连接远程服务器数据库
+"start:prod": "pnpm build && cross-env NODE_ENV=production tsx dist/app.js", //生产模式(开发模式自动打包并运行)
+"orm:init": "cross-env NODE_ENV=development npx tsx src/db/orm/ormInit.ts", //首次使用 Sequelize 连接数据库，读取.env.development文件中的数据库配置，并生成models文件
 "build": "tsc",                                                         //打包命令
 "push": "git push Gitee master && git push origin master"               //分别推送到Gitee和Github远程仓库
 ```

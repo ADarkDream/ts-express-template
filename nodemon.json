@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "ignore": ["dist", "node_modules"],
+  "ignore": ["dist", "node_modules", "src/db/orm/models/**"],
   "delay": "2500"
 }
