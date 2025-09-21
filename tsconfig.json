@@ -28,10 +28,15 @@
     "moduleResolution": "bundler" /* 指定模块解析策略 */,
     "baseUrl": "./" /* 解析非相对模块名的基准目录 */,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     } /* 设置模块名到实际路径的映射 */,
     // "rootDirs": [],                                   /* 将多个目录视为一个目录（模块解析时） */
-    // "typeRoots": [],                                  /* 指定类型声明文件的搜索目录（类似 node_modules/@types） */
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ], /* 指定类型声明文件的搜索目录（类似 node_modules/@types） */
     // "types": [],                                      /* 指定自动包含的类型包名称 */
     // "allowUmdGlobalAccess": true,                     /* 允许从模块访问 UMD 全局变量 */
     // "moduleSuffixes": [],                             /* 模块解析时的文件后缀名列表 */
@@ -101,6 +106,11 @@
     // "skipDefaultLibCheck": true,                      /* 跳过默认库的类型检查 */
     "skipLibCheck": true /* 跳过所有 .d.ts 文件的类型检查 */
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

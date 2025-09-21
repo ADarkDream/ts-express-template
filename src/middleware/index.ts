@@ -8,7 +8,7 @@ import config_route from "@/configs/config_route"
 import { Secret } from "jsonwebtoken"
 
 /**全局中间件，精简res.send()*/
-export const send = (req: Request, res: CustomResponse, next: NextFunction) => {
+export const sendHandler = (req: Request, res: CustomResponse, next: NextFunction) => {
   res.ss = (data, status = 200) => {
     if (typeof data === "string") return res.send({ code: status, msg: data })
     const { code, ...restData } = data
@@ -98,6 +98,7 @@ if (cycleTime < 86400000)
 // 检查token是否即将过期，如果是，则生成新的token
 let times = 0
 
+/** 打印接口信息;区分公共接口和私有接口;验证和更新Token */
 export const jwtHandler = (req: Request, res: CustomResponse, next: NextFunction) => {
   // 检查请求路径是否为需要排除的路径，如果是，则直接调用 next() 进行下一个中间件处理
   times += 1
@@ -162,7 +163,8 @@ const jwtVerification = (
     // 如果token还有一个小时就要过期，或者token已经是上一版本的
     else if (req.auth.exp * 1000 - Date.now() < 3600000 || secretKey === oldSecretKey) {
       //则生成新的token返回
-      const newToken = newJwt.create(req.auth.value)
+      const oldToken = req.auth.value
+      const newToken = newJwt.create(oldToken)
       // console.log(newToken)
       // 将新token放入响应头中，客户端可以通过响应头获取新token
       res.header("Authorization", newToken)
@@ -183,7 +185,7 @@ const jwtVerification = (
 //#endregion
 
 const middleware = {
-  send,
+  send: sendHandler,
   errorHandler,
   asyncHandler,
 }

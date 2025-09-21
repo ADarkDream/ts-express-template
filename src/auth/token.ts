@@ -5,6 +5,7 @@ import { resolve, dirname } from "path"
 import { fileURLToPath } from "url"
 import crypto from "crypto" //获取随机密钥
 import { getDiffTimestamp, getDiffTime } from "@/utils/time"
+import { UserInfo } from "@/types/account"
 
 // 当前文件绝对路径
 const __filename = fileURLToPath(import.meta.url)
@@ -22,7 +23,7 @@ const updateCycle: string = "14d"
 /**更新周期的毫秒数*/
 const cycleTime: number = 1209600000
 
-type Token = {
+type TokenConfig = {
   version: number
   key: string
   time: number
@@ -49,7 +50,7 @@ function updateTokenSecretKey() {
   //更新token的密钥
   if (diffTime > 1) {
     //如果大于一周，则更新token的密钥
-    const newKey: Token = {
+    const newKey: TokenConfig = {
       version: version + 1, //记录本次更新密钥版本
       key: crypto.randomBytes(32).toString("hex"), // hex ：一种编码格式，将每个字节编码为两个十六进制字符
       time: Date.now(), //记录本次更新时间
@@ -73,10 +74,9 @@ function updateTokenSecretKey() {
  * @param time 过期时间
  * @returns 加密后的token
  */
-function newToken(value: Token, time: string = updateCycle): string {
-  value.tokenVersion = currentVersion
+function newToken(value: UserInfo, time: string = updateCycle): string {
   const option: SignOptions = { expiresIn: time as SignOptions["expiresIn"] }
-  return jwt.sign({ value }, currentSecretKey, option)
+  return jwt.sign({ value, tokenVersion: currentVersion }, currentSecretKey, option)
 }
 
 /**

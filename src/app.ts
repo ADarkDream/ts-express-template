@@ -3,7 +3,7 @@ import dotenv from "dotenv" //环境变量的库
 dotenv.config({ path: `./.env.${process.env.NODE_ENV}` })
 import express, { Request, Response, NextFunction } from "express"
 import cors from "cors"
-import { send, errorHandler, jwtHandler } from "@/middleware/index"
+import { sendHandler, errorHandler, jwtHandler } from "@/middleware/index"
 import config from "@/configs/config.js"
 import { generateModel } from "@/db/orm/ormInit"
 import { testUserQuery } from "@/db/orm/sql/user"
@@ -12,6 +12,8 @@ import { testUserQuery } from "@/db/orm/sql/user"
 import routers from "@/routers/index"
 
 import { connectWithRetry } from "@/db/index"
+
+import type { MiddlewareType, MiddleWareWithErrorType } from "./types/system"
 
 /**服务器监听端口*/
 const BASE_PORT = config.BASE_PORT || process.env.BASE_PORT || 9000
@@ -39,11 +41,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 //全局中间件，精简res.send()
-app.use(send as (req: Request, res: Response, next: NextFunction) => void)
+app.use(sendHandler as MiddlewareType)
 
-//Todo 将express-jwt库替换为jwtwebtoken中间件
 //JWT中间件
-app.use(jwtHandler as (req: Request, res: Response, next: NextFunction) => void)
+app.use(jwtHandler as MiddlewareType)
 
 //静态资源中间件,允许访问static目录下的文件
 app.use("/favicon.ico", express.static("static/favicon.ico"))
@@ -54,7 +55,7 @@ app.use("/img", express.static("static/images"))
 app.use("/", routers)
 
 //路由错误捕获中间件
-app.use(errorHandler as (err: Error, req: Request, res: Response, next: NextFunction) => void)
+app.use(errorHandler as MiddleWareWithErrorType)
 
 //启动服务器
 app.listen(BASE_PORT, async () => {
