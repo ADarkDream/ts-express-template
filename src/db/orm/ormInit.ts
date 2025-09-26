@@ -10,10 +10,15 @@ const __filename = fileURLToPath(import.meta.url)
 // 当前文件所在目录
 const __dirname = dirname(__filename)
 
-/**执行终端命令， 生成sequelize的模型*/
+/**
+ * 执行终端命令， 生成sequelize的模型
+ */
 export async function generateModel() {
   try {
     const { DB_NAME, DB_USER, DB_PWD, DB_HOST, DB_PORT } = process.env
+    if (!DB_NAME || !DB_USER || !DB_PWD || !DB_HOST || !DB_PORT) {
+      throw new Error("|❌ 缺少必要的数据库配置环境变量")
+    }
     const filePath = resolve(__dirname, "./models")
     const initFilePath = join(filePath, "init-models.ts")
 
@@ -26,7 +31,7 @@ export async function generateModel() {
       )
     }
 
-    const cmd = `npx sequelize-auto -o "${filePath}" -d ${DB_NAME} -h ${DB_HOST} -u ${DB_USER} -p ${DB_PORT} -x ${DB_PWD} -e mysql --lang ts --caseModel p --caseFile l`
+    const cmd = `npx sequelize-auto -o "${filePath}" -d ${DB_NAME} -h ${DB_HOST} -u ${DB_USER} -p ${DB_PORT} -x ${DB_PWD} -e mysql --lang ts --caseModel p --caseFile l --table-alias`
 
     const stdout = execSync(cmd)
     console.log("✅ ORM模型生成成功：\n", stdout.toString())

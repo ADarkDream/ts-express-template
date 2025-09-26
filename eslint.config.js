@@ -5,6 +5,8 @@ import globals from "globals"
 import eslint from "@eslint/js"
 import tseslint from "typescript-eslint"
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
+// jsdoc 配置及规则参考：https://www.dongaigc.com/p/gajus/eslint-plugin-jsdoc#user-content-eslint-plugin-jsdoc-configuration-flat-config
+import jsdoc from "eslint-plugin-jsdoc"
 import prettier from "eslint-plugin-prettier"
 import prettierConfig from "./.prettierrc.cjs"
 
@@ -25,12 +27,15 @@ export default [
       "logs",
       "temp",
       "robot",
+      "**/models/init-models.ts",
     ],
   },
   /** JS 推荐配置 */
   eslint.configs.recommended,
   /** Prettier 配置 */
   eslintPluginPrettierRecommended,
+  /** JSDoc 推荐配置 */
+  jsdoc.configs["flat/recommended-typescript"],
 
   /** 自定义规则 */
   {
@@ -46,9 +51,14 @@ export default [
     plugins: {
       "@typescript-eslint": tseslint,
       prettier: prettier,
+      jsdoc,
     },
     rules: {
-      "prettier/prettier": ["error", prettierConfig], // 让 ESLint 执行 Prettier 规则
+      // 让 ESLint 执行 Prettier 规则
+      "prettier/prettier": ["error", prettierConfig],
+
+      // JSDoc 相关规则（警告）
+      "jsdoc/require-description": "warn",
 
       // 允许 console 用于调试
       "no-console": "off",

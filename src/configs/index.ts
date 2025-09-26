@@ -54,7 +54,7 @@ export default {
   },
   /**
    * 网易云
-   * */
+   */
   NETEASE: {
     /**
      * 网易云音乐用户cookie认证信息

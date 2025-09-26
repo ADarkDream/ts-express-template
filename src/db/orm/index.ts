@@ -6,6 +6,7 @@ import {
   CreateOptions,
   InferCreationAttributes,
   FindOptions,
+  UpdateOptions,
 } from "sequelize"
 import dotenv from "dotenv"
 import path from "path"
@@ -14,10 +15,20 @@ import fs from "fs"
 import { initModels } from "./models/init-models"
 import { handleMysqlError } from "@/utils/database"
 import { MysqlError } from "@/types/system"
+import type { DbInterface, TransactionTask } from "@/types/db/orm"
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 const { DB_NAME, DB_USER, DB_PWD, DB_HOST, DB_PORT } = process.env
-console.log(DB_NAME, DB_USER, DB_PWD, DB_HOST, DB_PORT)
+// console.warn("|Sequelize连接数据库的配置:", DB_NAME, DB_USER, DB_PWD, DB_HOST, DB_PORT)
+
+//通过cross-env在脚本执行时设置IS_REMOTE=true来区分本地和远程开发模式
+const isRemote = process.env.IS_REMOTE === "true"
+if (isRemote) {
+  console.error(
+    "|⚠️ Sequelize不可连接远程数据库，因为现有SSH链接只有一条stream,而Sequelize需要TCP链接，暂未实现该连接方式",
+  )
+  process.exit(1)
+}
 
 const sequelize = new Sequelize(DB_NAME!, DB_USER!, DB_PWD, {
   dialect: "mysql",
@@ -35,6 +46,9 @@ const models = initModels(sequelize)
 sequelize
   .authenticate()
   .then(() => {
+    console.warn(
+      "|⚠️ 使用Sequelize连接数据库请确保models目录下有模型文件且为最新版本，否则请删除db/orm/models目录后运行 orm:init 脚本重新生成模型文件",
+    )
     console.log("|Sequelize连接数据库成功")
   })
   .catch((err: Error) => {
@@ -44,42 +58,40 @@ sequelize
 // 初始化模型容器
 const db: DbInterface = { sequelize, Sequelize }
 
-// 定义 db 对象结构
-interface DbInterface {
-  sequelize: Sequelize
-  Sequelize: typeof Sequelize
-  [modelName: string]: ModelStatic<Model> | Sequelize | typeof Sequelize // 索引签名
-}
-
 // 动态导入模型文件
-const modelsDir = path.join(process.cwd(), "models")
-const modelFiles = fs
-  .readdirSync(modelsDir)
-  .filter((file) => file.endsWith(".js") && file !== "index.js")
+// const modelsDir = path.join(process.cwd(), "./src/db/orm/models")
+// console.log("|读取模型文件目录：", modelsDir)
 
-modelFiles.forEach(async (file) => {
-  // 使用 async 来保证顺序执行
-  const model = await import(path.join(modelsDir, file))
-  const modelInstance = model.default(sequelize, DataTypes) // 使用 default 导入模型
-  db[modelInstance.name] = modelInstance
-})
+// const modelFiles = fs
+//   .readdirSync(modelsDir)
+//   .filter((file) => file.endsWith(".ts") && file !== "init-models.ts")
 
-// 建立模型之间的关联关系（如果有的话）
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db)
-  }
-})
+// modelFiles.forEach(async (file) => {
+//   // 使用 async 来保证顺序执行
+//   const model = await import(path.join(modelsDir, file))
+//   const modelInstance = model.default(sequelize, DataTypes) // 使用 default 导入模型
+//   db[modelInstance.name] = modelInstance
+// })
+
+// // 建立模型之间的关联关系（如果有的话）
+// Object.keys(db).forEach((modelName) => {
+//   if (db[modelName].associate) {
+//     db[modelName].associate(db)
+//   }
+// })
 
 /**
  * 通用 ORM 插入封装
  * @param model Sequelize 模型
  * @param values 插入字段
  * @param options Sequelize 插入选项（可选，比如事务）
+ * @returns
+ * - 成功时，返回插入的模型实例
+ * - 失败时，抛出错误
  */
 const ormInsertAsync = async <T extends Model>(
   model: ModelStatic<T>,
-  values: InferCreationAttributes<T>,
+  values: T["_creationAttributes"], // 用模型自身的属性类型
   options: CreateOptions = {},
 ): Promise<T> => {
   try {
@@ -105,24 +117,9 @@ const ormFindAsync = async <T extends Model>(
 
 /**
  * 使用 Sequelize 执行批量事务操作，支持动态插入语句（通过回调函数添加更多任务）。
- *
  * @async
- * @param {Array<{
- *   model: import('sequelize').ModelStatic<any>, // Sequelize 模型（如 User, Post）
- *   action: 'create' | 'update' | 'destroy' | 'query',      // 操作类型
- *   values: Object | Array,                       // 要传入操作的数据
- *   options?: Object,                             // 额外选项（例如 where 条件、个性化事务配置等）
- *   callback?: (result: any) => Array<{
- *     model: import('sequelize').ModelStatic<any>,
- *     action: 'create' | 'update' | 'destroy',
- *     values: Object | Array,
- *     options?: Object,
- *     callback?: Function
- *   }>
- * }>} tasks 要执行的事务任务队列，每项包含模型、操作、数据及可选的回调
- *
- * @returns {Promise<Array>} 所有任务的执行结果数组
- *
+ * @param tasks 要执行的事务任务队列，每项包含模型、操作、数据及可选的回调
+ * @returns 事务执行结果数组
  * @example
  * await sequelizeTransactionAsync([
  *   {
@@ -139,7 +136,7 @@ const ormFindAsync = async <T extends Model>(
  *   }
  * ])
  */
-const ormTransactionAsync = async (tasks) => {
+const ormTransactionAsync = async (tasks: TransactionTask[]) => {
   const t = await db.sequelize.transaction()
   const results = []
   let currentIndex = 0
@@ -159,7 +156,11 @@ const ormTransactionAsync = async (tasks) => {
       if (action === "create") {
         result = await model.create(values, opts)
       } else if (action === "update") {
-        result = await model.update(values, opts)
+        if (!values.where) throw new Error("update 任务必须提供 where")
+        result = await model.update(values.updateValues ?? {}, {
+          ...opts,
+          where: values.where,
+        } as UpdateOptions)
       } else if (action === "destroy") {
         result = await model.destroy(opts)
       } else {
@@ -186,4 +187,5 @@ const ormTransactionAsync = async (tasks) => {
     throw err
   }
 }
+
 export { sequelize, Sequelize, models, ormInsertAsync, ormFindAsync, ormTransactionAsync }

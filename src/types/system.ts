@@ -41,15 +41,6 @@ export type CtxHandler = (
   next: NextFunction,
 ) => void | Promise<void>
 
-/**路由处理函数类型*/
-export interface CustomRouter {
-  get: RequestHandler
-  post: RequestHandler
-  delete: RequestHandler
-  put: RequestHandler
-  [key: string]: RequestHandler
-}
-
 /**数据库错误类型*/
 export interface MysqlError extends Error {
   code?: string
@@ -59,3 +50,13 @@ export interface MysqlError extends Error {
 
 /**数据库事务委托查询参数类型*/
 export type TransactionQuery = { sqlStr: string; values: Array<any>; callback?: Function }
+
+/**路由处理函数类型*/
+export type CustomRouter<T extends string = string> = {
+  [key in T]: RequestHandler
+} & {
+  get: RequestHandler
+  post: RequestHandler
+  delete: RequestHandler
+  put: RequestHandler
+}

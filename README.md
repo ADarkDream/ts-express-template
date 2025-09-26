@@ -86,33 +86,41 @@ pnpm build
 │── .vscode                 // VSCode项目相关配置
 │   ├── extensions.json     // VSCode插件推荐
 │   └── settings.json       // VSCode项目配置
-│── dist                    // 打包后的文件存放路径(生产模式)
+│── dist                    // 打包后的文件存放路径(带类型的JS，生产模式)
 │── doc                     // 各类文档
 │── download                // 下载功能下载的文件存储地址
 │── node_modules            // 依赖包
+│── scripts                 // 各类项目外脚本文件
 │── src                     // 项目主目录
+│   ├── auth                // 权限控制
 │   ├── configs             // 各类配置(优先级高于环境变量)
-│   └── middlewares         // 中间件
-│   └── routes              // 路由
+│   ├── controllers         // 路由控制器
+│   ├── db                  // 数据库相关
+│   │   └── orm             // ORM 相关（Sequelize，暂时弃用） 
+│   ├── middlewares         // 中间件
+│   ├── routers             // 路由
 │   │   ├── test            // 二级路由示例：/test
-│   │   │   ├── controller  // 所有/test子路由的路由控制器函数
-│   │   │   └── index.ts    // 所有/test子路由
-│   │   ├── controller      // 主路由的路由控制器函数
+│   │   │   └── index.ts    // 所有/test的子路由
 │   │   └── index.ts        // 主路由，添加并导出所有路由,处理默认请求和404请求
-│   └── types               // 类型定义
-│   └── utils               // 工具函数
+│   ├── services            // 每个路由的业务代码
+│   ├── types               // 类型定义
+│   ├── utils               // 工具函数
 │   └── app.ts              // 项目入口文件
 │── static                  // 静态资源文件夹，可在app.ts中配置范围和路径
 │── .env                    // 全局环境变量
-│── .env.development        // 开发环境模式下的变量(开发环境下默认)
+│── .env.development        // 开发环境模式下的变量(默认)
 │── .env.production         // 生产环境模式下的变量，脚本带上 "--mode 环境名" 参数即可读取对应环境下的变量，如脚本 "build:prod" 使用的 "--mode production"
+│── .env.remote             // 远程(开发)环境模式下的变量(变量暂时同开发环境，多了SSH连接远程数据库的配置，待完善)
+│── .env.[环境名].template   // 各个环境模式下的变量模板
 │── .prettierignore         // prettier 检查忽略文件
 │── .prettierrc.cjs         // prettier 配置
 │── commitlint.config.cjs   // commitlint 和 cz-git 配置
 │── eslint.config.js        // eslint 配置
+│── nodemon.json            // nodemon 配置，管理项目自动重启
 │── package.json            // 依赖管理，存储项目信息、依赖包、脚本命令等
-│── tsconfig.json           // TypeScript 配置文件
-└── tsconfig.dev.json       // 用于开发模式运行的差异化 TypeScript 配置
+│── README.md               // 本说明文档
+│── tsconfig.dev.json       // 用于开发模式运行的差异化 TypeScript 配置
+└── tsconfig.json           // TypeScript 配置文件
 ```
 
 ## Git 提交规范

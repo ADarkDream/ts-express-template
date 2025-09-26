@@ -1,4 +1,8 @@
-/**处理时间戳,返回毫秒级(13位)时间戳*/
+/**
+ * 处理时间戳,返回毫秒级(13位)时间戳
+ * @param timestamp - 支持毫秒级(13位)、秒级(10位)时间戳，或ISO格式时间字符串
+ * @returns 返回毫秒级时间戳
+ */
 function formatTimestamp(timestamp: string | number): number {
   let isNumber = false
   if (typeof timestamp === "number") {
@@ -21,14 +25,22 @@ function formatTimestamp(timestamp: string | number): number {
   } else return Number(timestamp)
 }
 
-/**获取两个时间戳的插值(正常返回正负数)*/
+/**
+ * 获取两个时间戳的插值(正常返回正负数)
+ * @param timestampVal - 需要比较的时间戳，支持毫秒级(13位)、秒级(10位)时间戳，或ISO格式时间字符串
+ * @returns 返回时间差的毫秒数，正数表示过去的时间，负数表示未来的时间
+ */
 export function getDiffTimestamp(timestampVal: string | number): number {
   const timestamp = formatTimestamp(timestampVal) //处理时间戳,返回毫秒级(13位)时间戳
   const now = new Date().getTime()
   return now - timestamp
 }
 
-/**日期比较函数，返回距今时间*/
+/**
+ * 日期比较函数，返回距今时间
+ * @param timestampVal - 需要比较的时间戳，支持毫秒级(13位)、秒级(10位)时间戳，或ISO格式时间字符串
+ * @returns 返回一个字符串，表示时间差，例如 "5分钟前"、"2天前"、"3月5日"、"2022年3月5日"
+ */
 export function getDiffTime(timestampVal: string | number): string {
   const timestamp = formatTimestamp(timestampVal) //处理时间戳,返回毫秒级(13位)时间戳
 
@@ -79,12 +91,21 @@ export function getDiffTime(timestampVal: string | number): string {
   }
 }
 
-/**数字小于10则补0*/
+/**
+ * 数字小于10则补0
+ * @param value 数字
+ * @returns 补0后的字符串
+ */
 function addZero(value: number) {
   if (value < 10) return "0" + value
   return value.toString()
 }
 
+/**
+ * 获取格式化时间字符串 "YY/MM/DD HH:mm"
+ * @param timestamp - 可选时间戳，默认为当前时间
+ * @returns 返回格式化后的时间字符串，例如 "23/10/05 14:30"
+ */
 export //需要一个时间戳,否则默认给出当前时间
 function getTime(timestamp = Date.now()) {
   const d = new Date(timestamp)

@@ -1,6 +1,10 @@
 import { MysqlError } from "@/types/system"
 
-/**数据库错误信息翻译函数*/
+/**
+ * 数据库错误信息翻译函数
+ * @param err 数据库错误对象
+ * @returns 返回一个新的错误对象，包含用户友好的错误信息和原始错误对象
+ */
 export function handleMysqlError(err: MysqlError) {
   const errorMap: Record<string, string> = {
     ER_LOCK_DEADLOCK: "数据库出现死锁，请稍后再试或联系管理员",

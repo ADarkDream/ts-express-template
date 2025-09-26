@@ -4,7 +4,7 @@ import { CustomRequest, CustomResponse, CtxHandler } from "@/types/system"
 import { expressjwt } from "express-jwt"
 import newJwt from "@/auth/token"
 import { getDiffTime, getTime } from "@/utils/time"
-import config_route from "@/configs/config_route"
+import config_route from "@/configs/route"
 import { Secret } from "jsonwebtoken"
 
 /**全局中间件，精简res.send()*/
@@ -13,7 +13,7 @@ export const sendHandler = (req: Request, res: CustomResponse, next: NextFunctio
     if (typeof data === "string") return res.send({ code: status, msg: data })
     const { code, ...restData } = data
     res.send({
-      code: code || status || 200,
+      code: code || status,
       ...restData,
     })
   }
@@ -22,7 +22,7 @@ export const sendHandler = (req: Request, res: CustomResponse, next: NextFunctio
     if (typeof data === "string") return res.send({ code: status, msg: data })
     const { code, ...restData } = data
     res.send({
-      code: code || status || 300,
+      code: code || status,
       ...restData,
     })
   }
@@ -37,7 +37,13 @@ export const sendHandler = (req: Request, res: CustomResponse, next: NextFunctio
   next()
 }
 
-/**全局错误中间件,捕获未捕获的错误(在app末尾使用)*/
+/**
+ * 全局错误中间件,捕获未捕获的错误(在app末尾使用)
+ * @param err - 发生的错误
+ * @param req - 请求对象
+ * @param res - 响应对象
+ * @param next - 下一个中间件函数
+ */
 export const errorHandler = (
   err: Error,
   req: CustomRequest,
@@ -64,10 +70,9 @@ export const errorHandler = (
 /**
  * 封装异步请求处理，支持自定义错误消息
  * @param handler - 异步处理函数
- * @param defaultErrorMessage - 默认错误消息
+ * @param defaultErrorMessage - 默认错误消息(返回的错误信息优先级为：error.message >defaultErrorMessage > "未知错误")
  * @returns Express中间件函数
  */
-
 export function asyncHandler(
   handler: CtxHandler,
   defaultErrorMessage = "未知错误",
@@ -98,7 +103,13 @@ if (cycleTime < 86400000)
 // 检查token是否即将过期，如果是，则生成新的token
 let times = 0
 
-/** 打印接口信息;区分公共接口和私有接口;验证和更新Token */
+/**
+ * 打印接口信息;区分公共接口和私有接口;验证和更新Token
+ * @param req 请求对象
+ * @param res 响应对象
+ * @param next 下一个中间件函数
+ * @returns void
+ */
 export const jwtHandler = (req: Request, res: CustomResponse, next: NextFunction) => {
   // 检查请求路径是否为需要排除的路径，如果是，则直接调用 next() 进行下一个中间件处理
   times += 1
@@ -185,7 +196,7 @@ const jwtVerification = (
 //#endregion
 
 const middleware = {
-  send: sendHandler,
+  sendHandler,
   errorHandler,
   asyncHandler,
 }

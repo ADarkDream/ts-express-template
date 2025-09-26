@@ -16,28 +16,32 @@ let db: any
 //#region SSH 连接远程数据库
 
 // 手动读取 `.env.remote`(远程环境) 并解析为对象（不写入 process.env）
-const productionEnv = dotenv.parse(fs.readFileSync("./.env.remote"))
+const remoteEnv = dotenv.parse(fs.readFileSync("./.env.remote"))
 
 const sshClient = new Client()
 
 let dbPromise: any // 新增一个 Promise 以确保 db 初始化完成
 
-/**初始化 SSH 连接，连接远程 MySQL 数据库*/
+/**
+ * 初始化 SSH 连接，连接远程 MySQL 数据库
+ * @returns
+ * - Promise<mysql.Connection> 连接成功后返回 MySQL 连接对象
+ */
 function initSSHConnection() {
   dbPromise = new Promise((resolve, reject) => {
     const ssh_config: ConnectConfig = {
-      host: productionEnv.SSH_HOST,
-      port: Number(productionEnv.SSH_PORT),
-      username: productionEnv.SSH_USER,
-      password: productionEnv.SSH_PWD,
+      host: remoteEnv.SSH_HOST,
+      port: Number(remoteEnv.SSH_PORT),
+      username: remoteEnv.SSH_USER,
+      password: remoteEnv.SSH_PWD,
     }
-    //使用生产模式下的数据库配置（因为连接的是远程的数据库）
+    //使用远程模式下的数据库配置
     const mysqlConfig = {
-      host: productionEnv.DB_HOST,
-      port: productionEnv.DB_PORT,
-      user: productionEnv.DB_USER,
-      password: productionEnv.DB_PWD,
-      database: productionEnv.DB_NAME,
+      host: remoteEnv.DB_HOST,
+      port: remoteEnv.DB_PORT,
+      user: remoteEnv.DB_USER,
+      password: remoteEnv.DB_PWD,
+      database: remoteEnv.DB_NAME,
     }
     sshClient.on("ready", async () => {
       try {
@@ -133,8 +137,13 @@ const connectWithRetry = async () => {
 
 /**
  * 单条插入 / 查询 / 更新 / 删除，自动处理缓存
- * @param {string} sqlStr SQL语句
- * @param {Array} values 参数
+ * @param sqlStr SQL语句
+ * @param values 参数
+ * @returns 查询结果
+ * - INSERT 语句返回：`OkPacket` 对象，包含插入的ID等信息
+ * - SELECT 语句返回：查询结果数组
+ * - UPDATE 语句返回：`OkPacket` 对象，包含受影响的行数等信息
+ * - DELETE 语句返回：`OkPacket` 对象，包含受影响的行数等信息
  */
 const queryAsync = async (sqlStr: string, values: Array<any>) => {
   try {
@@ -155,8 +164,10 @@ const queryAsync = async (sqlStr: string, values: Array<any>) => {
 
 /**
  * 执行批量事务,支持通过回调来动态处理(例如拿到上一条插入语句的id，加入到下一句关系连接语句)
- * @param {{sqlStr:string, values:Array,callback?:Function}} queries
+ * @param queries SQL语句数组，每个元素包含 sqlStr、values 和可选的 callback
  * @returns
+ * - 成功时，返回每条语句的结果数组
+ * - 失败时，抛出错误
  */
 const transactionAsync = async (queries: TransactionQuery[]) => {
   let connection

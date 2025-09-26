@@ -1,12 +1,12 @@
 // src/app.ts
 import dotenv from "dotenv" //环境变量的库
 dotenv.config({ path: `./.env.${process.env.NODE_ENV}` })
-import express, { Request, Response, NextFunction } from "express"
+import express from "express"
 import cors from "cors"
 import { sendHandler, errorHandler, jwtHandler } from "@/middleware/index"
-import config from "@/configs/config.js"
-import { generateModel } from "@/db/orm/ormInit"
-import { testUserQuery } from "@/db/orm/sql/user"
+import config from "@/configs/index.js"
+// import { generateModel } from "@/db/orm/ormInit"
+// import { testUserQuery } from "@/db/orm/sql/user"
 
 //* 导入全部路由文件
 import routers from "@/routers/index"
@@ -59,14 +59,16 @@ app.use(errorHandler as MiddleWareWithErrorType)
 
 //启动服务器
 app.listen(BASE_PORT, async () => {
-  console.warn(`|当前环境是：${process.env.Node_ENV} 模式`)
+  console.warn(`|当前环境是：${process.env.NODE_ENV} 模式`)
   console.warn(`|服务器已启动，正在监听 ${BASE_URL}:${BASE_PORT}`)
+
+  // 生成sequelize的模型（转为手动执行脚本 orm:init 生成）
+  // await generateModel()
 
   //连接数据库并进行初始化查询
   await connectWithRetry()
-  //生成sequelize的模型（转为手动执行脚本 orm:init 生成）
-  // await generateModel()
-  //测试用户查询
+
+  // sequelize测试用户查询
   // testUserQuery()
 })
 

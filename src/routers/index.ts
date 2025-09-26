@@ -1,8 +1,8 @@
 //一级路由模块(主路由)
 import express, { Router } from "express"
-import { router_success, router_error } from "./controller"
+import { router_success, router_error } from "@/controller"
 //导入子路由(二级路由)
-import test from "./test/index"
+import test from "./test"
 
 const router: Router = express.Router()
 
@@ -10,13 +10,13 @@ const router: Router = express.Router()
 router.get("/", router_success)
 
 //#region 一级路由
+//* 这里添加一级路由
+
 /**
  * test相关的路由模块
  * 为其添加一级路由/test
- * */
+ */
 router.use("/test", test)
-
-//* 这里添加一级路由
 
 //#endregion
 

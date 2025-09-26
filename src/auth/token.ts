@@ -31,7 +31,15 @@ type TokenConfig = {
   [key: string]: any
 }
 
-/**检查更新token的密钥*/
+/**
+ * 检查更新token的密钥
+ * @returns
+ * - currentSecretKey: 当前版本的密钥
+ * - oldSecretKey: 上个版本的密钥
+ * - currentVersion: 当前密钥的版本
+ * - cycleTime: 更新周期的毫秒数
+ * - updateCycle: 更新周期
+ */
 function updateTokenSecretKey() {
   const filePath = resolve(__dirname, "../configs/keys.json")
 

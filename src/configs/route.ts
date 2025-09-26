@@ -1,7 +1,7 @@
 export default {
   /**公共接口，不进行token校验*/
   PUBLIC: [
-    "/account/emailCode", //登录验证码
+    "/test/aaa", //测试接口
     "/account/register", //注册
     "/account/login", //登录
     "/activity/list", //活动列表
